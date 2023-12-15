@@ -11,6 +11,6 @@ const animalTimeSchema = mongoose.Schema({
 	date: Date,
 });
 
-const AnimalTime = new mongoose.Model("AnimalTime", animalTimeSchema);
+const AnimalTime = new mongoose.model("AnimalTime", animalTimeSchema);
 
 module.exports = AnimalTime;

@@ -11,6 +11,6 @@ const animalWeightSchema = mongoose.Schema({
 	date: Date,
 });
 
-const AnimalWeight = new mongoose.Model("AnimalWeight", animalWeightSchema);
+const AnimalWeight = new mongoose.model("AnimalWeight", animalWeightSchema);
 
 module.exports = AnimalWeight;

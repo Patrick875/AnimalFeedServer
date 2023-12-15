@@ -12,6 +12,6 @@ router
 router
 	.route("/:id")
 	.get(feedingController.getOne)
-	.delete(feedingController.deleteFeeding);
+	.delete(feedingController.deleteAnimal);
 
 module.exports = router;
