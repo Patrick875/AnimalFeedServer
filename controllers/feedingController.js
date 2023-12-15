@@ -2,19 +2,26 @@ const Animal = require("./../models/AnimalModel");
 const AnimalWeightAndTime = require("./../models/AnimalWeightAndTime");
 
 exports.getAll = async (req, res) => {
-	const animals = await Animal.find()
-		.populate({ path: "weightandtime", options: { sort: { date: -1 } } })
-		.populate("owner")
-		.exec();
-	res.status(200).json({
-		status: "success",
-		results: animals.length,
-		data: animals,
-	});
+	try {
+		const animals = await Animal.find()
+			.populate({ path: "weightandtime", options: { sort: { date: -1 } } })
+			.populate("owner")
+			.exec();
+		res.status(200).json({
+			status: "success",
+			results: animals.length,
+			data: animals,
+		});
+	} catch (error) {
+		console.log(error);
+		res
+			.status(500)
+			.json({ message: "failed fetching", status: "server error" });
+	}
 };
 exports.getOne = async (req, res) => {
-	const animal = await Animal.findById(req.params.id)
-		.populate("weightandtime")
+	const animal = await Animal.findOne({ animalId: req.params.id })
+		.populate({ path: "weightandtime", options: { sort: { date: -1 } } })
 		.populate("owner");
 	res.status(200).json({
 		status: "success",

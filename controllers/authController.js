@@ -11,8 +11,6 @@ const sendToken = (user, statusCode, req, res) => {
 	const token = signToken(user.id);
 	const cookieOptions = {
 		expire: new Date(Date.now()) + process.env.JWT_EXPIRATION_NUM,
-		secure: process.env.NODE_ENV === "production" ? true : false,
-		httpOnly: process.env.NODE_ENV === "production" ? true : false,
 	};
 
 	res.cookie("jwt", token, cookieOptions);
@@ -67,7 +65,7 @@ exports.login = async (req, res, next) => {
 		$or: [{ email: userCredentials }, { telephone: userCredentials }],
 	}).select("+password");
 
-	if (!user || !(await user.checkPassword(password, user.password))) {
+	if (!user || !(user.password === password)) {
 		return res.status(400).json({
 			status: "fail",
 			message: "incorrect email or password",
