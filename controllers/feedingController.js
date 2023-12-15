@@ -18,13 +18,14 @@ exports.getOne = async (req, res) => {
 	});
 };
 exports.addFeedings = async (req, res) => {
-	 let animal= await Animal.findById(req.body.animalId);
+	const {animalId,weight,time}=req.query;
+	 let animal= await Animal.findById(animalId);
 		if(!animal) {
-			animal= await Animal.create(req.body.animalId)
+			animal= await Animal.create(animalId)
 		}
 	const date= Date.now();
-	const animalWeight= await animalWeight.create({animal: animal._id, weight:req.body.weight,date});
-	const animalTime= await animalTime.create ({animal:animal._id,time:req.body.time,date})
+	const animalWeight= await animalWeight.create({animal: animal._id, weight:weight,date});
+	const animalTime= await animalTime.create ({animal:animal._id,time:time,date})
 	res.status(201).json({
 		status: "success",
 		data: animal,
