@@ -4,11 +4,10 @@ const feedingController = require("./../controllers/feedingController");
 
 const router = express.Router();
 
-router
-	.route("/")
-	.get(feedingController.getAll)
-	.post(feedingController.addFeedings)
-	.delete(feedingController.deleteAll);
+router.get("/", feedingController.addFeedings);
+router.get("/all", feedingController.getAll);
+
+router.delete("/", feedingController.deleteAll);
 router
 	.route("/:id")
 	.get(feedingController.getOne)
