@@ -12,7 +12,6 @@ router
 router
 	.route("/:id")
 	.get(feedingController.getOne)
-	.patch(feedingController.updateFeeding)
 	.delete(feedingController.deleteFeeding);
 
 module.exports = router;
