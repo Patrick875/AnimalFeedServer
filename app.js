@@ -9,7 +9,8 @@ const app = express();
 
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(cors({ origin: "https://genuine-arithmetic-b0c8ef.netlify.app/" }));
+app.use(cors({ origin: "*" }));
+// app.use(cors({ origin: "https://genuine-arithmetic-b0c8ef.netlify.app/" }));
 app.options("*", cors());
 
 app.use("/api/v1/", userRoutes);
