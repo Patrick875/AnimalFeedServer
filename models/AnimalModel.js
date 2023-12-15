@@ -1,18 +1,37 @@
 const mongoose = require("mongoose");
 
-const animalSchema = mongoose.Schema({
-	id: {
-		type: String,
-		require: [true, "Animal Id is required"],
-		trim: true,
+const animalSchema = mongoose.Schema(
+	{
+		animalId: {
+			type: String,
+			require: [true, "AnimalId is required"],
+			trim: true,
+		},
 	},
-	times: { type: mongoose.Schema.Types.ObjectId, ref: "AnimalTime" },
-	weights: { type: mongoose.Schema.Types.ObjectId, ref: "AnimalWeight" },
-	owner: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-		require: [true, "Animal owner Id is required"],
-	},
+	{
+		timestamps: true,
+
+		toJSON: {
+			virtuals: true,
+		},
+		toObject: {
+			virtuals: true,
+		},
+	}
+);
+
+animalSchema.virtual("weightandtime", {
+	ref: "AnimalWeightAndTime",
+	localField: "_id",
+	foreignField: "animal",
+	justOne: false,
+});
+
+animalSchema.virtual("owner", {
+	ref: "User",
+	localField: "_id",
+	foreignField: "animals",
+	justOne: false,
 });
 
 const Animal = new mongoose.model("Animal", animalSchema);

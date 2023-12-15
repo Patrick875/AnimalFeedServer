@@ -1,9 +1,11 @@
 const Animal = require("./../models/AnimalModel");
-const AnimalWeight = require("./../models/AnimalWeightModel");
-const AnimalTime = require("./../models/AnimalTimeModel");
+const AnimalWeightAndTime = require("./../models/AnimalWeightAndTime");
 
 exports.getAll = async (req, res) => {
-	const animals = await Animal.find().populate("weights").populate("times");
+	const animals = await Animal.find()
+		.populate({ path: "weightandtime", options: { sort: { date: -1 } } })
+		.populate("owner")
+		.exec();
 	res.status(200).json({
 		status: "success",
 		results: animals.length,
@@ -12,8 +14,8 @@ exports.getAll = async (req, res) => {
 };
 exports.getOne = async (req, res) => {
 	const animal = await Animal.findById(req.params.id)
-		.populate("weights")
-		.populate("times");
+		.populate("weightandtime")
+		.populate("owner");
 	res.status(200).json({
 		status: "success",
 		data: animal,
@@ -21,25 +23,30 @@ exports.getOne = async (req, res) => {
 };
 exports.addFeedings = async (req, res) => {
 	const { animalId, weight, time } = req.query;
-	let animal = await Animal.findById(animalId);
-	if (!animal) {
-		animal = await Animal.create(animalId);
+	try {
+		let animal = await Animal.findOne({ animalId });
+		if (!animal) {
+			animal = await Animal.create({ animalId });
+		}
+		const date = Date.now();
+
+		const weightandtime = await AnimalWeightAndTime.create({
+			animal: animal.id,
+			weight: weight,
+			time,
+			date,
+		});
+
+		res.status(201).json({
+			status: "success",
+			data: animal,
+		});
+	} catch (error) {
+		console.log(error);
+		return res
+			.status(500)
+			.json({ data: "server error", message: "server error" });
 	}
-	const date = Date.now();
-	const animalWeight = await AnimalWeight.create({
-		animal: animal._id,
-		weight: weight,
-		date,
-	});
-	const animalTime = await AnimalTime.create({
-		animal: animal._id,
-		time: time,
-		date,
-	});
-	res.status(201).json({
-		status: "success",
-		data: animal,
-	});
 };
 
 exports.deleteAnimal = async (req, res) => {
