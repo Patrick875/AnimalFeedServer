@@ -1,47 +1,38 @@
-const Feeding = require("./../models/FeedingModel");
+const Animal = require("./../models/AnimalModel");
+const AnimalWeight = require ('./../models/AnimalWeight');
+const AnimalTime= require ('./../models/AnimalTime');
 
 exports.getAll = async (req, res) => {
-	const feedings = await Feeding.find();
+	const animals = await Animal.find().populate('weights').populate('times');
 	res.status(200).json({
 		status: "success",
-		results: feedings.length,
-		data: {
-			feedings,
-		},
+		results: animals.length,
+		data: animals,
 	});
 };
 exports.getOne = async (req, res) => {
-	const feeding = await Feeding.findById(req.params.id);
+	const animal= await Animal.findById(req.params.id).populate('weights').populate('times');;
 	res.status(200).json({
 		status: "success",
-		data: {
-			feeding,
-		},
+		data: animal
 	});
 };
 exports.addFeedings = async (req, res) => {
-	const newFeeding = await Car.create(req.body);
+	 let animal= await Animal.findById(req.body.animalId);
+		if(!animal) {
+			animal= await Animal.create(req.body.animalId)
+		}
+	const date= Date.now();
+	const animalWeight= await animalWeight.create({animal: animal._id, weight:req.body.weight,date});
+	const animalTime= await animalTime.create ({animal:animal._id,time:req.body.time,date})
 	res.status(201).json({
 		status: "success",
-		data: {
-			newFeeding,
-		},
+		data: animal,
 	});
 };
-exports.updateFeeding = async (req, res) => {
-	const feeding = await Feeding.findByIdAndUpdate(req.params.id, req.body, {
-		new: true,
-		runValidators: true,
-	});
-	res.status(203).json({
-		status: "success",
-		data: {
-			feeding,
-		},
-	});
-};
-exports.deleteFeeding = async (req, res) => {
-	await Feeding.findByIdAndDelete(req.params.id);
+
+exports.deleteAnimal = async (req, res) => {
+	await Animal.findByIdAndDelete(req.params.id);
 	res.status(204).json({
 		status: "success",
 		message: "deleted",
@@ -49,7 +40,7 @@ exports.deleteFeeding = async (req, res) => {
 };
 
 exports.deleteAll = async (req, res) => {
-	await Feeding.deleteMany();
+	await Animal.deleteMany();
 	res.status(204).json({
 		status: "success",
 		message: "deleted",
