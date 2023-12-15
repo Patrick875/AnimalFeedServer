@@ -53,26 +53,34 @@ exports.signup = async (req, res, next) => {
 	}
 };
 exports.login = async (req, res, next) => {
-	const { password } = req.body;
-	const userCredentials = req.body.user;
-	if (!userCredentials || !password) {
-		return res.status(401).json({
-			status: "fail",
-			message: "to login please provide both the email and the password",
+	try {
+		const { password } = req.body;
+		const userCredentials = req.body.user;
+		if (!userCredentials || !password) {
+			return res.status(401).json({
+				status: "fail",
+				message: "to login please provide both the email and the password",
+			});
+		}
+		const user = await User.findOne({
+			$or: [{ email: userCredentials }, { telephone: userCredentials }],
+		}).select("+password");
+
+		if (!user || !(user.password === password)) {
+			return res.status(400).json({
+				status: "fail",
+				message: "incorrect email or password",
+			});
+		}
+
+		sendToken(user, 200, req, res);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({
+			status: "request failed",
+			message: "error loging in ",
 		});
 	}
-	const user = await User.findOne({
-		$or: [{ email: userCredentials }, { telephone: userCredentials }],
-	}).select("+password");
-
-	if (!user || !(user.password === password)) {
-		return res.status(400).json({
-			status: "fail",
-			message: "incorrect email or password",
-		});
-	}
-
-	sendToken(user, 200, req, res);
 };
 
 exports.logout = (req, res) => {
