@@ -7,9 +7,7 @@ const app = require("./app");
 const PORT = process.env.PORT || 5100;
 const DB = process.env.ONLINE_DATABASE_URL;
 
-app.listen(PORT, () => {
-	console.log(`server running on port ${PORT}`);
-});
+
 
 mongoose
 	.connect(DB, {
@@ -18,6 +16,11 @@ mongoose
 	})
 	.then((con) => {
 		console.log("DB connection successful");
+		
+		app.listen(PORT, () => {
+	console.log(`server running on port ${PORT}`);
+});
+		
 	})
 	.catch((err) => {
 		console.log(err.name, err.message);
